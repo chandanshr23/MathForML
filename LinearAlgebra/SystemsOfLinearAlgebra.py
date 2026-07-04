@@ -125,18 +125,19 @@ plot_lines(A_system)
 
 #To Avoid Singularity errror due to 0 or infinite solutions it's better to solve the equations under try/catch block
 #Say for this equation : -x1+3x2=7 , 3x1+9x2=1 
-A_2=np.array([[-1,3],[3,9]],dtype=np.type(float))
-b_2=np.array([7,1],dtype=np.type(float))
-d_2=np.linalg.det(A_2) #Gives error
+A_2 = np.array([[-1,3],[3,9]],dtype=np.dtype(float))
+b_2 = np.array([7,1],dtype=float)
+#d_2 = np.linalg.det(A_2) #Gives error
 
 #Therefore
 try:
-    x_2=np.linalg.det(A_2)
-except np.linalg.linalgarror as err:
+    x_2 = np.linalg.det(A_2,b_2)
+    print(x_2)
+except np.linalg.LinAlgError  as err:
     print(err)
 
 
-A2_system = np.hstack((A_2,b_2.reshape(2,1)))
+A2_system = np.hstack((A_2,b_2.reshape(-1,1)))
 print(A2_system)
 
 #perform elimination
