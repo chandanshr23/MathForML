@@ -33,7 +33,7 @@ import time
 tic = time.time()
 c = dot(a,b)
 toc = time.time()
-print("Dot product: " c)
+print("Dot product: ",c)
 print(" Time for loop version " + str(1000*(toc-tic))+"ms" )
 
 #In Vectorized form
