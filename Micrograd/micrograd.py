@@ -1,5 +1,5 @@
 import random
-
+import math
 # ---------- Value class (your autograd engine) ----------
 class Value:
     def __init__(self, data, _children=(), _op=''):
@@ -38,6 +38,20 @@ class Value:
         out = Value(0 if self.data < 0 else self.data, (self,), 'ReLU')
         def _backward():
             self.grad += (out.data > 0) * out.grad
+        out._backward = _backward
+        return out
+
+    def exp(self):
+        out = Value(math.exp(self.data),(self,),'exp')
+        def _backward():
+            self.grad += out.data * out.grad
+        out._backward = _backward
+        return out
+
+    def log(self):
+        out = Value(math.log(self.data), (self,), 'log')
+        def _backward():
+            self.grad +=(1/self.data) * out.grad
         out._backward = _backward
         return out
 
@@ -81,8 +95,43 @@ class Value:
         variable.data = orig
 
         return (plus - minus) / (2*h)
-    
-    
+
+def softmax(logits):
+    exps = [x.exp() for x in logits]
+    total = sum(exps)
+    return [e / total for e in exps]
+
+def cross_entropy(logits, target_idx):
+    probs = softmax(logits)
+    return -probs[target_idx].log()
+
+def softmax_stable(logits):
+    max_val = max(x.data for x in logits)
+    shifted = [x - max_val for x in logits]
+    exps = [x.exp() for x in shifted]
+    total = sum(exps)
+    return [e / total for e in exps]
+
+logits = [Value(2.0), Value(1.0), Value(0.1)]
+probs = softmax(logits)
+print([p.data for p in probs])
+print(sum(p.data for p in probs))  # should be ~1.0
+
+loss = cross_entropy(logits, 0)   # true class is index 0 (the confident one)
+print(loss.data)   # should be small, since probs[0] is already high
+
+loss2 = cross_entropy(logits, 2)  # true class is index 2 (the least confident one)
+print(loss2.data)  # should be larger
+
+a = Value(2.0)
+b = a.exp()
+b.backward()
+print(a.data, a.grad)
+
+c = Value(2.0)
+d = c.log()
+d.backward()
+print(c.data, c.grad)
 
 # USer this part to the code for learning purpose
 # class Value:

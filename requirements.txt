@@ -3,3 +3,6 @@ matplotlib
 scikit-learn
 scipy
 sympy
+pandas
+w3_tools
+jax
