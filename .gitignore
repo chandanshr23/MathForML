@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# MNIST generated files
+MNIST/mnist_data.npz
+MNIST/mnist.png
+MNIST/mnist_weights.npz
+*.npz
